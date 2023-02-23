@@ -99,13 +99,20 @@ run_xray() {
     sed -i "s|PASSWORD|${USER_PASSWORD}|g;s|WSPATH|${USER_PATH}|g" /tmp/config.yaml
     ./web -c /tmp/config.yaml 2>&1 >/dev/null &
     PATH_IN_LINK=$(echo ${USER_PATH} | sed "s|\/|\%2F|g")
+    TROJAN_URL="trojan://${USER_PASSWORD}@${REPL_SLUG}.${REPL_OWNER}.repl.co:443?security=tls&type=ws&path=${PATH_IN_LINK}#Replit"
     echo ""
     echo "Share Link:"
-    echo trojan://"${USER_PASSWORD}@${REPL_SLUG}.${REPL_OWNER}.repl.co:443?security=tls&type=ws&path=${PATH_IN_LINK}#Replit"
+    echo ${TROJAN_URL}
+    #echo trojan://"${USER_PASSWORD}@${REPL_SLUG}.${REPL_OWNER}.repl.co:443?security=tls&type=ws&path=${PATH_IN_LINK}#Replit"
     echo "Trojan Password: ${USER_PASSWORD}, Websocket Path: ${USER_PATH}, Domain: ${REPL_SLUG}.${REPL_OWNER}.repl.co, Port: 443"
-    echo trojan://"${USER_PASSWORD}@${REPL_SLUG}.${REPL_OWNER}.repl.co:443?security=tls&type=ws&path=${PATH_IN_LINK}#Replit" >/tmp/link
+    #echo trojan://"${USER_PASSWORD}@${REPL_SLUG}.${REPL_OWNER}.repl.co:443?security=tls&type=ws&path=${PATH_IN_LINK}#Replit" >/tmp/link
     echo ""
-#   qrencode -t ansiutf8 </tmp/link
+
+    # 生成二维码
+    #qrencode -t ansiutf8 </tmp/link
+    qrencode -t ansiutf8  ${TROJAN_URL}
+
+    # 每10分钟进行一次唤醒操作
     while :; do
         curl https://${REPL_SLUG}.${REPL_OWNER}.repl.co
         sleep 600
